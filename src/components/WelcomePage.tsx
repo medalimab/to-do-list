@@ -6,14 +6,14 @@ import {
   welcomeTitleStyle,
   welcomeImageStyle,
 } from "../Style/WelcomePageStyles";
-import welcomeImage from ""; 
+import todoImage from "../assets/todo.png";
 
-const WelcomePage: React.FC = () => {
+const Welcome: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <Box sx={welcomePageContainerStyle}>
-      <img src={welcomeImage} alt="Welcome" style={welcomeImageStyle} />
+      <img src={todoImage} alt="" style={welcomeImageStyle} />
       <Typography variant="h3" sx={welcomeTitleStyle}>
         Welcome to the Todo App
       </Typography>
@@ -28,4 +28,4 @@ const WelcomePage: React.FC = () => {
   );
 };
 
-export default WelcomePage;
+export default Welcome;
