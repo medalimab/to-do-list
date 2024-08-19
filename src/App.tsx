@@ -1,25 +1,12 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
+import Welcome from "./components/WelcomePage";
 import { Task } from "./Interface/Task";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { appContainerStyle, titleStyle, noTaskMessageStyle, taskListTitleStyle } from "./Style/AppStyles";
-
-
-const Welcome = () => {
-  return (
-    <Box sx={appContainerStyle}>
-      <Typography variant="h3" sx={titleStyle}>
-        Welcome to Todo App
-      </Typography>
-      <Button variant="contained" color="primary" component={Link} to="/tasks">
-        Get Started
-      </Button>
-    </Box>
-  );
-};
 
 const App = () => {
   const [task, setTask] = useState<string>("");

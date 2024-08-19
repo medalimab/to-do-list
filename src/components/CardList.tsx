@@ -9,7 +9,7 @@ const CardList: React.FC<CardListProps> = ({ index, task, tasks, setTasks }) => 
   const [editTask, setEditTask] = useState<string>(task.task);
 
   const handleEdit = (e: React.FormEvent, id: number) => {
-    e.preventDefault();
+    e.preventDefault();    //pas de recharg
     setTasks(tasks.map((task) => (task.id === id ? { ...task, task: editTask } : task)));
     setEdit(false);
   };
