@@ -1,29 +1,35 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from "react-router-dom";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
 import { Task } from "./Interface/Task";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { appContainerStyle, titleStyle, noTaskMessageStyle, taskListTitleStyle } from "./Style/AppStyles";
+
+
+const Welcome = () => {
+  return (
+    <Box sx={appContainerStyle}>
+      <Typography variant="h3" sx={titleStyle}>
+        Welcome to Todo App
+      </Typography>
+      <Button variant="contained" color="primary" component={Link} to="/tasks">
+        Get Started
+      </Button>
+    </Box>
+  );
+};
 
 const App = () => {
   const [task, setTask] = useState<string>("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedTask, setCompletedTask] = useState<Array<Task>>([]);
 
-  //drag implementation
   const onDragEnd = (res: DropResult) => {
     const { destination, source } = res;
 
-    // Do nothing if there is no destination
-    if (!destination) {
-      return;
-    }
-
-    // Do nothing if the task is dropped at the same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
+    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
       return;
     }
 
@@ -31,7 +37,6 @@ const App = () => {
     let active = tasks;
     let complete = completedTask;
 
-    // Source task tracking
     if (source.droppableId === "TaskList") {
       add = active[source.index];
       active.splice(source.index, 1);
@@ -40,7 +45,6 @@ const App = () => {
       complete.splice(source.index, 1);
     }
 
-    // Destination task tracking
     if (destination.droppableId === "TaskList") {
       active.splice(destination.index, 0, add);
     } else {
@@ -60,50 +64,41 @@ const App = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          mt: 4,
-        }}
-      >
-        <Typography
-          variant="h3"
-          align="center"
-          fontWeight="bold"
-          sx={{ textDecoration: "underline" }}
-        >
-          Todo List
-        </Typography>
-        <InputField task={task} setTask={setTask} handleAdd={handleAdd} />
-        <Box>
-          {tasks.length === 0 ? (
-            <Typography variant="h6" fontWeight="bold" mt={6}>
-              No task added
-            </Typography>
-          ) : (
-            <div>
-              <Typography
-                textAlign="center"
-                fontWeight="bold"
-                mt={2}
-                mb={2}
-              >
-                All tasks
+    <Router>
+      <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/tasks" element={
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Box sx={appContainerStyle}>
+              <Typography variant="h3" sx={titleStyle}>
+                Todo List
               </Typography>
-              <TaskList
-                tasks={tasks}
-                setTasks={setTasks}
-                completedTask={completedTask}
-                setCompletedTask={setCompletedTask}
-              />
-            </div>
-          )}
-        </Box>
-      </Box>
-    </DragDropContext>
+              <InputField task={task} setTask={setTask} handleAdd={handleAdd} />
+              <Box>
+                {tasks.length === 0 ? (
+                  <Typography variant="h6" sx={noTaskMessageStyle}>
+                    No task added
+                  </Typography>
+                ) : (
+                  <div>
+                    <Typography sx={taskListTitleStyle}>
+                      All tasks
+                    </Typography>
+                    <TaskList
+                      tasks={tasks}
+                      setTasks={setTasks}
+                      completedTask={completedTask}
+                      setCompletedTask={setCompletedTask}
+                    />
+                  </div>
+                )}
+              </Box>
+            </Box>
+          </DragDropContext>
+        } />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 };
 
