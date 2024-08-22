@@ -11,3 +11,8 @@ export const taskBoxStyle: CSSProperties = {
 
 export const incompleteTaskBgColor = "#F4E2FF";
 export const completedTaskBgColor = "#d4ffdb";
+export const blockedTaskBgColor = "#FFD2D2"; 
+//export const inProgressTaskBgColor = "#f39c12"; 
+export const inProgressTaskBgColor = "#ffeb3b"; 
+
+
