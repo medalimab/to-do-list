@@ -2,6 +2,7 @@ import React from "react";
 import { Button, TextField, Box } from "@mui/material";
 import { formStyle, containerStyle } from "../Style/InputStyle"; 
 import { InputFieldProps } from "../Interface/InputFieldProps"; 
+import { ButtonStyle } from "../Style/button.style";
 
 const InputField: React.FC<InputFieldProps> = ({ task, setTask, handleAdd }) => {
   return (
@@ -15,14 +16,13 @@ const InputField: React.FC<InputFieldProps> = ({ task, setTask, handleAdd }) => 
           onChange={(e) => setTask(e.target.value)}
           fullWidth
         />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          style={{ marginLeft: '0.7rem' }}
-        >
+        
+      < ButtonStyle>
+       
+        
           Add
-        </Button>
+          </ButtonStyle>
+        
       </Box>
     </form>
   );
