@@ -11,36 +11,65 @@ import { appContainerStyle, titleStyle, noTaskMessageStyle, taskListTitleStyle }
 const App = () => {
   const [task, setTask] = useState<string>("");
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [completedTask, setCompletedTask] = useState<Array<Task>>([]);
+  const [completedTask, setCompletedTask] = useState<Task[]>([]);
+  const [blockedTasks, setBlockedTasks] = useState<Task[]>([]);
+  const [inProgressTasks, setInProgressTasks] = useState<Task[]>([]);
+
 
   const onDragEnd = (res: DropResult) => {
     const { destination, source } = res;
 
+    // Early return if there is no destination or if the destination is the same as the source
     if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
-      return;
+        return;
     }
 
-    let add;
-    let active = tasks;
-    let complete = completedTask;
+    let active = [...tasks];
+    let inProgress = [...inProgressTasks];
+    let blocked = [...blockedTasks];
+    let complete = [...completedTask];
+    let movedTask: Task | null = null;
 
+    // Remove the task from the source list
     if (source.droppableId === "TaskList") {
-      add = active[source.index];
-      active.splice(source.index, 1);
-    } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
+        movedTask = active[source.index];
+        active.splice(source.index, 1);
+    } else if (source.droppableId === "InProgressTasks") {
+        movedTask = inProgress[source.index];
+        inProgress.splice(source.index, 1);
+    } else if (source.droppableId === "BlockedTasks") {
+        movedTask = blocked[source.index];
+        blocked.splice(source.index, 1);
+    } else if (source.droppableId === "TaskRemove") {
+        movedTask = complete[source.index];
+        complete.splice(source.index, 1);
     }
 
+    // Early return if the movedTask is null (just in case)
+    if (!movedTask) return;
+
+    // Add the task to the destination list
     if (destination.droppableId === "TaskList") {
-      active.splice(destination.index, 0, add);
-    } else {
-      complete.splice(destination.index, 0, add);
+        active.splice(destination.index, 0, movedTask);
+    } else if (destination.droppableId === "InProgressTasks") {
+        inProgress.splice(destination.index, 0, movedTask);
+    } else if (destination.droppableId === "BlockedTasks") {
+        blocked.splice(destination.index, 0, movedTask);
+    } else if (destination.droppableId === "TaskRemove") {
+        complete.splice(destination.index, 0, movedTask);
     }
 
-    setCompletedTask(complete);
+    // Update the state after moving the task
     setTasks(active);
-  };
+    setInProgressTasks(inProgress);
+    setBlockedTasks(blocked);
+    setCompletedTask(complete);
+};
+
+
+  
+  
+  
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +105,11 @@ const App = () => {
                       setTasks={setTasks}
                       completedTask={completedTask}
                       setCompletedTask={setCompletedTask}
+                      blockedTasks={blockedTasks} // Pass blocked tasks
+                      setBlockedTasks={setBlockedTasks} // Pass setter for blocked tasks
+                      
+                      inProgressTasks={inProgressTasks} // Ajouté pour les tâches en cours
+                      setInProgressTasks={setInProgressTasks} // Ajouté pour les tâches en cours
                     />
                   </div>
                 )}
