@@ -3,20 +3,40 @@ import { Draggable } from "react-beautiful-dnd";
 import { CardListProps } from "../Interface/CardListProps";
 import { CardStyles } from "../Style/CardStyles";
 import { Box, Button, TextField, Typography, Grid, Paper } from "@mui/material";
+import axios from "axios";
 
 const CardList: React.FC<CardListProps> = ({ index, task, tasks, setTasks }) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [editTask, setEditTask] = useState<string>(task.task);
+  const [editTask, setEditTask] = useState<string>(task.name);
 
-  const handleEdit = (e: React.FormEvent, id: number) => {
+  const handleEdit = async (e: React.FormEvent, id: number) => {
     e.preventDefault();
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, task: editTask } : task)));
-    setEdit(false);
+    try {
+      const updatedTask = { ...task, name: editTask };
+      await axios.put(`http://localhost:3001/tasks/${id}`, updatedTask);
+
+      // Update the task in the state after a successful API call
+      setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
+      setEdit(false);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await axios.delete(`http://localhost:3001/tasks/${id}`);
+      // Call the API to delete the task
+     // await axios.delete(`http://localhost:3001/tasks/${id}`);
+
+      // Remove the task from the state after a successful API call
+      setTasks(tasks.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
+
+
 
   const handleDone = (id: number) => {
     setTasks(tasks.map((task) => (task.id === id ? { ...task, isDone: !task.isDone } : task)));
@@ -49,7 +69,7 @@ const CardList: React.FC<CardListProps> = ({ index, task, tasks, setTasks }) => 
                   variant="body1"
                   sx={{ textDecoration: task.isDone ? "line-through" : "none", ...CardStyles.text }}
                 >
-                  {task.task}
+                  {task.name}
                 </Typography>
               )}
               <Grid container spacing={1} sx={CardStyles.buttonBox}>
